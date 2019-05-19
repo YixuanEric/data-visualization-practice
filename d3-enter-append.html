@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>enter and append</title>
+    <script src="https://d3js.org/d3.v5.js"></script>
+</head>
+<body>
+    
+    <svg width="1000" height = "400"></svg>
+    <script>
+        const data = [100,50,155,180,120];
+        const rectWidth  = 200;
+        const height = document.querySelector('svg').getAttribute('height');
+        const svg = d3.select('svg');
+        //select svg element first
+        svg.selectAll('rect')
+            .data(data)
+            .enter().append('rect')
+            //the svg element in HTML is empty, so we just use enter() append
+            .attr('x', (d, i) => i * rectWidth)
+            .attr('y', d => height - d)
+            .attr('width', rectWidth)
+            .attr('height', d => d)
+            .attr('fill', d => d >= 150 ? 'red' : 'blue')
+            .attr('stroke', '#fff');
+    
+    </script>
+    
+</body>
+</html>

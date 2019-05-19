@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>scales and axes</title>
+    <script src="https://d3js.org/d3.v5.js"></script>
+   
+</head>
+<body>
+    
+    <svg width="1000" height = "400"></svg>
+    <script>
+       
+        const city = 'San Francisco';
+        const height = document.querySelector('svg').getAttribute('height');
+        const svg = d3.select('svg');
+        //select svg element first
+
+        d3.tsv('data.tsv')
+        .then(data =>{
+           console.log(data);
+            // clean the data
+            data.forEach(d => {
+            d.date = new Date(d.date); // x
+            ++d[city]; // y
+            }); 
+
+             // get min/max
+            var min = d3.min(data, d => d[city]);
+            var max = d3.max(data, d => d[city]);
+            console.log(min, max);
+            // or use extent, which gives back [min, max]
+            var extent = d3.extent(
+                data, d => d[city]);
+            console.log(extent);
+
+            // try different scales, change the ranges, see what happens
+            var yScale = d3.scaleLinear()
+                .domain(extent)
+                .range([height, 0]);
+            
+            // try passing in tick valuess
+                var yAxis = d3.axisLeft()
+                .scale(yScale);
+            
+            d3.select('svg').append('g')
+                .attr('transform', 'translate(40, 20)')
+                .call(yAxis);
+        })
+        
+        .catch(err => console.log(err));
+
+    </script>
+    
+</body>
+</html>
