@@ -28,21 +28,21 @@
             }); 
 
              // get min/max
-            var min = d3.min(data, d => d[city]);
-            var max = d3.max(data, d => d[city]);
+            const min = d3.min(data, d => d[city]);
+            const max = d3.max(data, d => d[city]);
             console.log(min, max);
             // or use extent, which gives back [min, max]
-            var extent = d3.extent(
+            const extent = d3.extent(
                 data, d => d[city]);
             console.log(extent);
 
             // try different scales, change the ranges, see what happens
-            var yScale = d3.scaleLinear()
+            const yScale = d3.scaleLinear()
                 .domain(extent)
                 .range([height, 0]);
             
             // try passing in tick valuess
-                var yAxis = d3.axisLeft()
+                const yAxis = d3.axisLeft()
                 .scale(yScale);
             
             d3.select('svg').append('g')

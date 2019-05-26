@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>pie shape</title>
+    <script src="https://d3js.org/d3.v5.js"></script>
+</head>
+<body>
+    <svg width="1000" height = "400"></svg>
+    <script>
+        const data = [1,1,2,3,5,8,13,21];
+        const pieData = d3.pie()(data);
+        const colors = d3.scaleOrdinal()
+            .range(d3.schemeCategory10);
+        console.log(pieData)
+
+        const arc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(150)
+            .startAngle(d => d.startAngle)
+            .endAngle(d => d.endAngle);
+        const svg = d3.select('svg')
+            .append('g')
+            .attr('transform','translate(400 200)');
+        svg.selectAll('path')
+            .data(pieData).enter().append('path')
+            .attr('d', d => arc(d))
+            //The d attribute defines a path to be drawn.
+            .attr('fill', (d, i) => colors(d.value))
+            .attr('stroke', '#fff');
+       
+        
+    </script>
+</body>
+</html>
