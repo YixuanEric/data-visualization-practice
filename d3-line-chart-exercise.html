@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Line chart exercise</title>
+    <script src="https://d3js.org/d3.v5.js"></script>
+   
+</head>
+<body>
+    
+    <svg width="1000" height = "450"></svg>
+    <script>
+       
+        const city = 'New York';
+        const height = document.querySelector('svg').getAttribute('height');
+        const width = document.querySelector('svg').getAttribute('width');
+        const margin = {
+            top:20,
+            bottom:20,
+            left:20,
+            right:20
+        }
+        //select svg element first
+
+        d3.tsv('data.tsv')
+        //d3.tsv is a async process
+        .then(data =>{
+
+            // clean the data
+            data.forEach(d => {
+            d.date = d3.timeParse("%Y%m%d")(d.date);
+            //console.log(d.date);
+            d.date = new Date(d.date); // x
+            ++d[city]; // y
+            }); 
+
+            const xExtent = d3.extent(data, d => d.date);
+            //console.log(xExtent);
+            const xScale = d3.scaleTime()
+                .domain(xExtent)
+                .range([margin.left, width - margin.right]);
+            
+            
+            const yExtent = d3.extent(data, d => d[city]);
+            const max = d3.max(yExtent);
+            
+            const yScale = d3.scaleLinear()
+                .domain([0,max])
+                .range([height - margin.bottom, margin.top]);
+            
+            
+            //create the line
+            const line = d3.line()
+              .x(d => xScale(d.date))
+              .y(d => yScale(d[city]))
+              .curve(d3.curveCatmullRom)
+          
+            const svg = d3.select('svg');
+            svg.append('path')
+              .attr('d', line(data))
+              .attr('fill','none')
+              .attr('stroke','blue');
+             
+            
+
+            const xAxis = d3.axisBottom()
+                .scale(xScale)
+                .tickFormat(d => d3.timeFormat('%b %Y')(d));
+            const yAxis = d3.axisLeft()
+                .scale(yScale)
+            
+            svg.append('g')
+                .attr('transform', 'translate(' + [0, height - margin.bottom] + ')')
+                .call(xAxis);
+            svg.append('g')
+                .attr('transform', 'translate(' + [margin.left, 0] + ')')
+                .call(yAxis);
+            
+            
+        })
+        
+        .catch(err => console.log(err));
+
+    </script>
+    
+</body>
+</html>

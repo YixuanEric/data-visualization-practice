@@ -1,0 +1,95 @@
+<html>
+  
+<head>
+  <style type="text/css">
+    /*css to go here*/
+    svg {
+      width: 800;
+      height: 600;
+      margin:100px;
+    }
+    circle {
+      opacity: 0.5;
+    }
+  </style>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+
+<body>
+  <svg></svg>
+  <script>
+    // properties
+    var radius = 10;
+    var duration = 1500;
+    var width = 800;
+    var height = 600;
+    var svg = d3.select('svg');
+    // scales
+    var xScale = d3.scaleBand()
+      .rangeRound([0, width]);
+    var yScale = d3.scaleLinear()
+      .range([height, 0]);
+    var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    
+    function update(data, year) {
+     data = data.filter(d => d.year === year);
+     //console.log(data);
+
+     const t = d3.transition().duration(1000);
+
+     let circles = svg.selectAll('circle')
+      .data(data, d => d.key);
+      
+      //exit
+      circles.exit()
+      .transition(t)
+      .attr('r',0)
+      .remove();
+
+      const enter = circles.enter().append('circle')
+      .merge(circles)
+        .attr('cx', d => xScale(d.site)+10)
+        .transition(t)
+        .attr('cy', d => yScale(d.yield))
+        .attr('r', radius)
+        .attr('fill', d => colorScale(d.gen))
+        
+    }
+    
+    d3.csv('barleyfull.csv', function(err, response) {
+      response.forEach(function(d) {
+        // convert yield and year from string to int
+        d.year = +d.year;
+        d.yield = +d.yield;
+        // use gen and site as the unique key for each datum
+        d.key = d.site + ':' + d.gen;
+      });
+      //console.log(response);
+      const xDomain = response.map(d => d.site);
+      //console.log(xDomain);
+      xScale.domain(xDomain);
+      //console.log(xScale.domain());
+     
+      const yMax = d3.max(response, d=>d.yield);
+      yScale.domain([0,yMax]);
+
+      var startYear = 1927;
+      var numYears = 9;
+      var index = 0;
+     
+      
+                      
+                
+      //update(response, startYear);
+      setInterval(() => {
+         update(response, startYear + (index % numYears));
+         index += 1;
+       }, 1000)
+    });
+  </script>
+
+</body>
+
+
+</html>
